@@ -47,7 +47,7 @@ pipeline {
         stage('Security Scan') {
             steps {
                 script {
-                    bat "${VIRTUAL_ENV}\\Scripts\\python.exe -m bandit -r ."
+                    bat "${VIRTUAL_ENV}\\Scripts\\python.exe -m bandit -r . -f json -o bandit_report.json"
                 }
             }
         }
