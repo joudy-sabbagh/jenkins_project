@@ -55,18 +55,27 @@ pipeline {
             steps {
                 script {
                     echo "Deploying application..."
-                    
+
                     def deployDir = "${env.WORKSPACE}/deployment"
-                    
-                    sh "mkdir -p ${deployDir}"
-                    
-                    sh "cp app.py ${deployDir}/"
-                    sh "cp requirements.txt ${deployDir}/"
-                    
-                    sh "cp -r tests ${deployDir}/"
+
+                    if (isUnix()) {
+                        sh "mkdir -p ${deployDir}"
+                        sh "cp app.py ${deployDir}/"
+                        sh "cp requirements.txt ${deployDir}/"
+                        sh "cp -r tests ${deployDir}/"
+                    } else {
+                        bat "mkdir ${deployDir}"
+                        bat "copy app.py ${deployDir}\\"
+                        bat "copy requirements.txt ${deployDir}\\"
+                        bat "xcopy tests ${deployDir}\\tests /E /I"
+                    }
 
                     dir(deployDir) {
-                        sh "python app.py"
+                        if (isUnix()) {
+                            sh "python app.py"
+                        } else {
+                            bat "python app.py"
+                        }
                     }
                 }
             }
